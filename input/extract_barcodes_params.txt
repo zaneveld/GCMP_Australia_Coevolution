@@ -1,0 +1,6 @@
+extract_barcodes:input_type	barcode_paired_end
+extract_barcodes:bc1_len	19
+extract_barcodes:bc2_len	20
+extract_barcodes:attempt_read_reorientation	true
+extract_barcodes:disable_header_match	true
+extract_barcodes:mapping_fp	/Users/Ryan/Dropbox/qiime/gcmp16S/GCMP_16S_samples_sequenced.txt

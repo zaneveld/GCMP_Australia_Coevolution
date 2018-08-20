@@ -1,0 +1,2 @@
+join_paired_ends:perc_max_diff	25
+join_paired_ends:min_overlap	20

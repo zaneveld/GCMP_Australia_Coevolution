@@ -1,0 +1,5 @@
+pick_otus:similarity	0.97
+pick_otus:sizeorder True
+pick_otus:max_accepts 16
+pick_otus:max_rejects 64
+assign_taxonomy:assignment_method uclust
