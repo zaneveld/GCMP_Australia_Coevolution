@@ -1,0 +1,8 @@
+Command to generate plots:
+
+Rscript asr_viz_phytools_r10.r ../input/pruned_tree_T.newick ../input/diversity_by_sample_with_disease_no_zeros.txt
+
+
+You can adjust the colorscheme and leftwards vs. rightwards facing inside the script.  The relevant variables are abstracted to the 
+beginning of the script
+
