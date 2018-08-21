@@ -1,0 +1,2 @@
+beta_diversity:metrics bray_curtis,binary_jaccard,weighted_unifrac,unweighted_unifrac
+make_emperor:taxa_fp	/Users/Ryan/Dropbox/Selectively_Shared_Vega_Lab_Stuff/GCMP/Projects/Australia_Coevolution_Paper/16S_analysis/0_otu_table_generation/output/taxa_summaries_after_pynast_filtering/otu_table_mc2_wtax_no_pynast_failures_L6.txt

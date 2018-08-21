@@ -1,0 +1,3 @@
+split_libraries_fastq:max_bad_run_length	300
+split_libraries_fastq:phred_quality_threshold	0
+split_libraries_fastq:min_per_read_length_fraction	0.001
