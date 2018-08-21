@@ -1,0 +1,18 @@
+Added missing data:
+Added missing E3 size information from Projects/Expedition_Data/E3_Lizard_Island_2015/raw_metadataAustralia - January and February 2015 - Sample Data_2015-03-19
+
+Added columns:
+colony_width_max
+	=max("colony_width1","colony_width2")
+
+prop_max_diameter
+	=(colony_width_max/Colony_maximum_diameter)
+
+Colony_maximum_GCMP_recorded
+	this is the maximum size recorded in the mapping for each species
+
+Colony_maximum_diameter_universal
+	=max(Colony_maximum_GCMP_recorded,Colony_maximum_diameter)
+
+Calculations in: Projects/Australia_Coevolution_Paper/16S_analysis/1_canonical_starting_files/metadata_change_log/metadata_max_size_calc_v2
+

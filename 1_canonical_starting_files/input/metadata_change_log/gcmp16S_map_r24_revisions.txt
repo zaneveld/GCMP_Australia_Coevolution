@@ -1,0 +1,3 @@
+added oz_disease_mean and oz_disease_sd from Bette Willis' disease prevalence data. 
+
+This required splitting 'Acropora sp' into different Acropora growth forms, including 'bushy', 'clumpy', and 'staghorn'. We only had 6 unidentified Acroporas (from global dataset - only one or 2 from Australia), and these different growth forms certainly corresponded to different species.

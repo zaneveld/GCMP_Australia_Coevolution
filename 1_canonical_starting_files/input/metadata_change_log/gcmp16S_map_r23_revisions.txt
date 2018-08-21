@@ -1,0 +1,8 @@
+v23 (20160826; JZ): 
+
+#Fixed problem with header
+r22 has an _ instead of a # before the first column.  This messed up use in QIIME scripts.
+
+#Standardized capitalization of ‘Unknown’ to capitalized form. About half the entries were ‘unknown’…this made filtering harder when iterating, and could lead to errors, so I just set it to Unknown. About 6,800 entries affected. Only replaced whole cells that matched.
+
+#Standardized capitalization of ‘Y’ or ‘y’ to ‘y’. Only 3 cells affected. Only replaced whole cells that matched
