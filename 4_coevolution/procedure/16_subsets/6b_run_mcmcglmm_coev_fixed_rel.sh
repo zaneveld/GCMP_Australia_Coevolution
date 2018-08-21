@@ -1,0 +1,4 @@
+export compart="tissue"
+export taxon="g__Robusticola_robust"
+export rdatasetup="/Users/Ryan/Dropbox/Selectively_Shared_Vega_Lab_Stuff/GCMP/Projects/Australia_Coevolution_Paper/16S_analysis/4_coevolution/output/mcmcglmm_subsets/endos/tissue/g__Robusticola_robust/g__Robusticola_robust_mcmc_setup.RData"
+Rscript /Users/Ryan/Dropbox/Selectively_Shared_Vega_Lab_Stuff/GCMP/Projects/Australia_Coevolution_Paper/16S_analysis/4_coevolution/procedure/16_subsets/6c_run_mcmcglmm_coev_fixed_rel.r

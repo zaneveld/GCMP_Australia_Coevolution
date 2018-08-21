@@ -1,0 +1,4 @@
+export compart="skeleton"
+export taxon="f__Chromerida"
+export rdatasetup="/Users/Ryan/Dropbox/Selectively_Shared_Vega_Lab_Stuff/GCMP/Projects/Australia_Coevolution_Paper/16S_analysis/4_coevolution/output/mcmcglmm_subsets/chromerida_S/skeleton/f__Chromerida_binary_presence/f__Chromerida_mcmc_setup.RData"
+Rscript /Users/Ryan/Dropbox/Selectively_Shared_Vega_Lab_Stuff/GCMP/Projects/Australia_Coevolution_Paper/16S_analysis/4_coevolution/procedure/16_subsets/subset_chromerida/S/6c_run_mcmcglmm_coev_rel_20161219.r

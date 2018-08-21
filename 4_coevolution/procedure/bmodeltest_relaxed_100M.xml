@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" version="2.0">
+
+    <data
+id="${filename_stem}"
+name="${alignment.id}">
+        <#list alignment.sequences as sequence>
+            <sequence id="seq_${sequence.taxon.id}" taxon="${sequence.taxon.id}" totalcount="4" value="${sequence.data}"/>
+        </#list>
+    </data>
+
+
+
+    
+<map name="Uniform" >beast.math.distributions.Uniform</map>
+<map name="Exponential" >beast.math.distributions.Exponential</map>
+<map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+<map name="Normal" >beast.math.distributions.Normal</map>
+<map name="Beta" >beast.math.distributions.Beta</map>
+<map name="Gamma" >beast.math.distributions.Gamma</map>
+<map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+<map name="prior" >beast.math.distributions.Prior</map>
+<map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
+<map name="OneOnX" >beast.math.distributions.OneOnX</map>
+
+
+<run id="mcmc" spec="MCMC" chainLength="100000000">
+    <state id="state" storeEvery="5000">
+        <tree id="Tree.t:${filename_stem}" name="stateNode">
+            <taxonset id="TaxonSet.${filename_stem}" spec="TaxonSet">
+                <alignment idref="${filename_stem}"/>
+            </taxonset>
+        </tree>
+        <parameter id="birthRate.t:${filename_stem}" name="stateNode">1.0</parameter>
+        <stateNode id="BMT_ModelIndicator.s:${filename_stem}" spec="parameter.IntegerParameter" lower="0" upper="5">5</stateNode>
+        <parameter id="BMT_Rates.s:${filename_stem}" dimension="6" lower="0.01" name="stateNode" upper="100.0">1.0</parameter>
+        <parameter id="BMT_gammaShape.s:${filename_stem}" name="stateNode">1.0</parameter>
+        <parameter id="BMT_ProportionInvariable.s:${filename_stem}" lower="0.0" name="stateNode" upper="1.0">0.1</parameter>
+        <stateNode id="hasInvariableSites.s:${filename_stem}" spec="parameter.IntegerParameter">1</stateNode>
+        <stateNode id="hasGammaRates.s:${filename_stem}" spec="parameter.IntegerParameter">1</stateNode>
+        <stateNode id="hasEqualFreqs.s:${filename_stem}" spec="parameter.BooleanParameter">false</stateNode>
+        <parameter id="BMT_frequencies.s:${filename_stem}" dimension="4" name="stateNode">0.25 0.25 0.25 0.25</parameter>
+        <parameter id="ucldStdev.c:${filename_stem}" lower="0.0" name="stateNode">0.1</parameter>
+        <stateNode id="rateCategories.c:${filename_stem}" spec="parameter.IntegerParameter" dimension="182">1</stateNode>
+    </state>
+
+    <init id="RandomTree.t:${filename_stem}" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:${filename_stem}" taxa="@${filename_stem}">
+        <populationModel id="ConstantPopulation0.t:${filename_stem}" spec="ConstantPopulation">
+            <parameter id="randomPopSize.t:${filename_stem}" name="popSize">1.0</parameter>
+        </populationModel>
+    </init>
+
+    <distribution id="posterior" spec="util.CompoundDistribution">
+        <distribution id="prior" spec="util.CompoundDistribution">
+            <distribution id="YuleModel.t:${filename_stem}" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate.t:${filename_stem}" tree="@Tree.t:${filename_stem}"/>
+            <prior id="YuleBirthRatePrior.t:${filename_stem}" name="distribution" x="@birthRate.t:${filename_stem}">
+                <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
+            </prior>
+            <distribution id="BMT_RatesPrior.s:${filename_stem}" spec="beast.math.distributions.NucleotideRevJumpSubstModelRatePrior" modelIndicator="@BMT_ModelIndicator.s:${filename_stem}" x="@BMT_Rates.s:${filename_stem}">
+                <substModel id="RevJump.s:${filename_stem}" spec="NucleotideRevJumpSubstModel" modelIndicator="@BMT_ModelIndicator.s:${filename_stem}" rates="@BMT_Rates.s:${filename_stem}">
+                    <frequencies id="BMTfreqs.s:${filename_stem}" spec="ModelFrequencies" empirical="false" frequencies="@BMT_frequencies.s:${filename_stem}" hasEqualFreqs="@hasEqualFreqs.s:${filename_stem}"/>
+                </substModel>
+                <Exponential id="BMT_RatesPrior.s:${filename_stem}x" name="distr"/>
+            </distribution>
+            <distribution id="BMT_GammaShapePrior.s:${filename_stem}" spec="beast.math.distributions.BMTPrior" count="@hasGammaRates.s:${filename_stem}" x="@BMT_gammaShape.s:${filename_stem}">
+                <Exponential id="Exponential.0" name="distr">
+                    <parameter id="RealParameter.0" lower="0.0" name="mean" upper="0.0">1.0</parameter>
+                </Exponential>
+            </distribution>
+            <distribution id="BMT_PropInvariablePrior.s:${filename_stem}" spec="beast.math.distributions.BMTPrior" count="@hasInvariableSites.s:${filename_stem}" x="@BMT_ProportionInvariable.s:${filename_stem}">
+                <Beta id="Beta.0" name="distr">
+                    <parameter id="RealParameter.01" lower="0.0" name="alpha" upper="0.0">1.0</parameter>
+                    <parameter id="RealParameter.02" lower="0.0" name="beta" upper="0.0">4.0</parameter>
+                </Beta>
+            </distribution>
+            <prior id="BMT_freqsPrior.s:${filename_stem}" name="distribution" x="@BMT_frequencies.s:${filename_stem}">
+                <distr id="Dirichlet.0" spec="beast.math.distributions.Dirichlet">
+                    <parameter id="RealParameter.03" dimension="4" lower="0.0" name="alpha" upper="0.0">1.0 1.0 1.0 1.0</parameter>
+                </distr>
+            </prior>
+            <prior id="ucldStdevPrior.c:${filename_stem}" name="distribution" x="@ucldStdev.c:${filename_stem}">
+                <Gamma id="Gamma.0" name="distr">
+                    <parameter id="RealParameter.04" estimate="false" name="alpha">0.5396</parameter>
+                    <parameter id="RealParameter.05" estimate="false" name="beta">0.3819</parameter>
+                </Gamma>
+            </prior>
+        </distribution>
+        <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
+            <distribution id="treeLikelihood.${filename_stem}" spec="ThreadedTreeLikelihood" data="@${filename_stem}" tree="@Tree.t:${filename_stem}">
+                <siteModel id="BEASTModelTest.s:${filename_stem}" spec="BEASTModelTestSiteModel" gammaCategoryCount="4" hasGammaRates="@hasGammaRates.s:${filename_stem}" hasInvariantSites="@hasInvariableSites.s:${filename_stem}" proportionInvariant="@BMT_ProportionInvariable.s:${filename_stem}" shape="@BMT_gammaShape.s:${filename_stem}" substModel="@RevJump.s:${filename_stem}">
+                    <parameter id="BMT_mutationRate.s:${filename_stem}" estimate="false" name="mutationRate">1.0</parameter>
+                </siteModel>
+                <branchRateModel id="RelaxedClock.c:${filename_stem}" spec="beast.evolution.branchratemodel.UCRelaxedClockModel" rateCategories="@rateCategories.c:${filename_stem}" tree="@Tree.t:${filename_stem}">
+                    <LogNormal id="LogNormalDistributionModel.c:${filename_stem}" S="@ucldStdev.c:${filename_stem}" meanInRealSpace="true" name="distr">
+                        <parameter id="RealParameter.06" estimate="false" lower="0.0" name="M" upper="1.0">1.0</parameter>
+                    </LogNormal>
+                    <parameter id="ucldMean.c:${filename_stem}" estimate="false" name="clock.rate">1.0</parameter>
+                </branchRateModel>
+            </distribution>
+        </distribution>
+    </distribution>
+
+    <operator id="YuleBirthRateScaler.t:${filename_stem}" spec="ScaleOperator" parameter="@birthRate.t:${filename_stem}" scaleFactor="0.75" weight="3.0"/>
+
+    <operator id="YuleModelTreeScaler.t:${filename_stem}" spec="ScaleOperator" scaleFactor="0.5" tree="@Tree.t:${filename_stem}" weight="3.0"/>
+
+    <operator id="YuleModelTreeRootScaler.t:${filename_stem}" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@Tree.t:${filename_stem}" weight="3.0"/>
+
+    <operator id="YuleModelUniformOperator.t:${filename_stem}" spec="Uniform" tree="@Tree.t:${filename_stem}" weight="30.0"/>
+
+    <operator id="YuleModelSubtreeSlide.t:${filename_stem}" spec="SubtreeSlide" tree="@Tree.t:${filename_stem}" weight="15.0"/>
+
+    <operator id="YuleModelNarrow.t:${filename_stem}" spec="Exchange" tree="@Tree.t:${filename_stem}" weight="15.0"/>
+
+    <operator id="YuleModelWide.t:${filename_stem}" spec="Exchange" isNarrow="false" tree="@Tree.t:${filename_stem}" weight="3.0"/>
+
+    <operator id="YuleModelWilsonBalding.t:${filename_stem}" spec="WilsonBalding" tree="@Tree.t:${filename_stem}" weight="3.0"/>
+
+    <operator id="BMT_ModelTestOperator.s:${filename_stem}" spec="BMTMergeSplitOperator" modelIndicator="@BMT_ModelIndicator.s:${filename_stem}" rates="@BMT_Rates.s:${filename_stem}" substModel="@RevJump.s:${filename_stem}" weight="1.0"/>
+
+    <operator id="BMT_Ratescaler.s:${filename_stem}" spec="BMTExchangeOperator" delta="0.15" modelIndicator="@BMT_ModelIndicator.s:${filename_stem}" rates="@BMT_Rates.s:${filename_stem}" substModel="@RevJump.s:${filename_stem}" weight="1.0"/>
+
+    <operator id="BMT_gammaShapeScaler.s:${filename_stem}" spec="BMTScaleOperator" count="@hasGammaRates.s:${filename_stem}" parameter="@BMT_gammaShape.s:${filename_stem}" scaleFactor="0.5" weight="0.5"/>
+
+    <operator id="BMT_ProportionInvariableScaler.s:${filename_stem}" spec="BMTScaleOperator" count="@hasInvariableSites.s:${filename_stem}" parameter="@BMT_ProportionInvariable.s:${filename_stem}" scaleFactor="0.5" weight="0.5"/>
+
+    <operator id="BMT_hasGammaRatesFlipper.s:${filename_stem}" spec="BMTBirthDeathOperator" count="@hasGammaRates.s:${filename_stem}" rates="@BMT_gammaShape.s:${filename_stem}" weight="0.1"/>
+
+    <operator id="BMT_hasInvariableSitesFlipper.s:${filename_stem}" spec="BMTBirthDeathOperator" count="@hasInvariableSites.s:${filename_stem}" rates="@BMT_ProportionInvariable.s:${filename_stem}" weight="0.1"/>
+
+    <operator id="BMT_FreqsFlipOperator.s:${filename_stem}" spec="BitFlipOperator" parameter="@hasEqualFreqs.s:${filename_stem}" weight="0.1"/>
+
+    <operator id="BMT_FrequenciesExchanger.s:${filename_stem}" spec="DeltaExchangeOperator" delta="0.01" weight="0.1">
+        <parameter idref="BMT_frequencies.s:${filename_stem}"/>
+    </operator>
+
+    <operator id="ucldStdevScaler.c:${filename_stem}" spec="ScaleOperator" parameter="@ucldStdev.c:${filename_stem}" scaleFactor="0.5" weight="3.0"/>
+
+    <operator id="CategoriesRandomWalk.c:${filename_stem}" spec="IntRandomWalkOperator" parameter="@rateCategories.c:${filename_stem}" weight="10.0" windowSize="1"/>
+
+    <operator id="CategoriesSwapOperator.c:${filename_stem}" spec="SwapOperator" intparameter="@rateCategories.c:${filename_stem}" weight="10.0"/>
+
+    <operator id="CategoriesUniform.c:${filename_stem}" spec="UniformOperator" parameter="@rateCategories.c:${filename_stem}" weight="10.0"/>
+
+    <logger id="tracelog" fileName="${filename_stem}.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
+        <log idref="posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+        <log idref="treeLikelihood.${filename_stem}"/>
+        <log id="TreeHeight.t:${filename_stem}" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:${filename_stem}"/>
+        <log idref="YuleModel.t:${filename_stem}"/>
+        <log idref="birthRate.t:${filename_stem}"/>
+        <log idref="RevJump.s:${filename_stem}"/>
+        <log idref="BMT_ModelIndicator.s:${filename_stem}"/>
+        <log idref="BMT_Rates.s:${filename_stem}"/>
+        <log idref="BMT_gammaShape.s:${filename_stem}"/>
+        <log idref="BMT_ProportionInvariable.s:${filename_stem}"/>
+        <log idref="hasGammaRates.s:${filename_stem}"/>
+        <log idref="hasInvariableSites.s:${filename_stem}"/>
+        <log id="ActivePropInvariable.s:${filename_stem}" spec="beast.math.statistic.RPNcalculator" expression="BMT_ProportionInvariable.s:${filename_stem} hasInvariableSites.s:${filename_stem} *">
+            <parameter idref="BMT_ProportionInvariable.s:${filename_stem}"/>
+            <parameter idref="hasInvariableSites.s:${filename_stem}"/>
+        </log>
+        <log id="ActiveGammaShape.s:${filename_stem}" spec="beast.math.statistic.RPNcalculator" expression="BMT_gammaShape.s:${filename_stem} hasGammaRates.s:${filename_stem} *">
+            <parameter idref="BMT_gammaShape.s:${filename_stem}"/>
+            <parameter idref="hasGammaRates.s:${filename_stem}"/>
+        </log>
+        <log idref="hasEqualFreqs.s:${filename_stem}"/>
+        <log idref="BMT_frequencies.s:${filename_stem}"/>
+        <log idref="ucldStdev.c:${filename_stem}"/>
+        <log id="rate.c:${filename_stem}" spec="beast.evolution.branchratemodel.RateStatistic" branchratemodel="@RelaxedClock.c:${filename_stem}" tree="@Tree.t:${filename_stem}"/>
+    </logger>
+
+    <logger id="screenlog" logEvery="1000">
+        <log idref="posterior"/>
+        <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+    </logger>
+
+    <logger id="treelog.t:${filename_stem}" fileName="$(tree).trees" logEvery="1000" mode="tree">
+        <log id="TreeWithMetaDataLogger.t:${filename_stem}" spec="beast.evolution.tree.TreeWithMetaDataLogger" branchratemodel="@RelaxedClock.c:${filename_stem}" tree="@Tree.t:${filename_stem}"/>
+    </logger>
+
+</run>
+
+</beast>
